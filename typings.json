@@ -1,0 +1,5 @@
+{
+  "emitDecoratorMetadata": true,
+  "experimentalDecorators": true,
+  "dependencies": {}
+}

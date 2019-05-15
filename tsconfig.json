@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "ES2017",
+        "lib": ["es2017"],
+        "outDir": "ts-build",
+        "rootDir": "./",
+        // "noImplicitAny": true,
+        "experimentalDecorators": true,
+        "moduleResolution": "node",
+        "removeComments": true,
+        "resolveJsonModule": true
+    },
+    "include": ["**/**.ts"],
+    "exclude": ["node_modules/**", "**/*.spec.ts"]
+}

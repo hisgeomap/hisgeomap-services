@@ -1,0 +1,40 @@
+{
+    "name": "geo-info-collector",
+    "version": "1.0.0",
+    "main": "index.js",
+    "author": "TreeNewBeeing",
+    "license": "MIT",
+    "private": true,
+    "dependencies": {
+        "@elastic/elasticsearch": "^7.0.0-rc.1",
+        "apollo-server-koa": "^2.4.2",
+        "koa": "^2.7.0",
+        "koa-bodyparser": "^4.2.1",
+        "koa-compress": "^3.0.0",
+        "koa-router": "^7.4.0",
+        "load-json-file": "^5.2.0",
+        "nzh": "^1.0.4",
+        "pg": "^7.8.0",
+        "reflect-metadata": "^0.1.13",
+        "typeorm": "^0.2.12",
+        "typescript": "^3.3.3",
+        "zlib": "^1.0.5"
+    },
+    "scripts": {
+        "start:dev": "tsc --watch & nodemon ts-build/index.js",
+        "start": "yarn compile; node index.js",
+        "compile": "tsc",
+        "compile:watch": "tsc --watch",
+        "test": "mocha",
+        "build:image": "docker build --rm -f ./Dockerfile -t hisgeomap-back-end:latest ."
+    },
+    "devDependencies": {
+        "@types/elasticsearch": "^5.0.32",
+        "@types/koa": "^2.0.48",
+        "@types/koa-router": "^7.0.39",
+        "@types/node": "^11.9.4",
+        "mocha": "^5.2.0",
+        "request": "^2.88.0",
+        "typeorm-model-generator": "^0.3.3"
+    }
+}

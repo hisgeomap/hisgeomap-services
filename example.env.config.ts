@@ -1,16 +1,16 @@
 export default {
     database: {
-        host: "databse",
-        port: 1111,
+        host: "db",
+        port: 5432,
         username: "aaaaaa",
         password: "bbbbbb",
         database: "geo-info-collector"
     },
     search: {
-        host: "http://search"
+        host: "http://search:9200"
     },
     server: {
-        port: 5000,
+        port: 8082,
         root: "/api"
     }
 };

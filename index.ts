@@ -2,6 +2,7 @@ import * as Koa from "koa";
 import * as Router from "koa-router";
 import * as bodyParser from "koa-bodyparser";
 import * as compress from "koa-compress";
+import * as cors from "@koa/cors";
 
 import config from "./env.config";
 import Database from "./db/database";
@@ -58,6 +59,7 @@ router.post(`${root}/search-places-suggestion`, async ctx => {
     };
 });
 
+app.use(cors());
 app.use(bodyParser());
 app.use(
     compress({

@@ -9,6 +9,7 @@ export abstract class Place {
     static async get(repo, year, zoom, bound): Promise<Place[]> {
         return await repo.find({
             select: ["x_coor", "geom", "y_coor", "name_ch"],
+            // take: 200,
             where: {
                 beg_yr: LessThanOrEqual(year),
                 end_yr: MoreThanOrEqual(year)
@@ -24,7 +25,7 @@ export abstract class Place {
                 properties: {
                     name_ch: place.name_ch,
                     x_coor: place.x_coor,
-                    y_coor: place.y_coor,
+                    y_coor: place.y_coor
                 },
                 geometry: place.geom
             }))

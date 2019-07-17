@@ -36,14 +36,15 @@ export default class GeoInfoCollector {
                     bound
                 )
             ),
-            Place.toGeoJSON(
-                await prefecturepgn.get(
-                    this.repo.prefecturepgn,
-                    year,
-                    zoom,
-                    bound
-                )
-            )
+            Place.toGeoJSON([])
+            // Place.toGeoJSON(
+            //     await prefecturepgn.get(
+            //         this.repo.prefecturepgn,
+            //         year,
+            //         zoom,
+            //         bound
+            //     )
+            // )
         ]);
     }
 

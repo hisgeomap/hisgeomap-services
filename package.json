@@ -7,7 +7,7 @@
     "private": true,
     "dependencies": {
         "@elastic/elasticsearch": "^7.0.0-rc.1",
-        "apollo-server-koa": "^2.4.2",
+        "@koa/cors": "^3.0.0",
         "koa": "^2.7.0",
         "koa-bodyparser": "^4.2.1",
         "koa-compress": "^3.0.0",
@@ -21,7 +21,7 @@
         "zlib": "^1.0.5"
     },
     "scripts": {
-        "start:dev": "tsc --watch & nodemon ts-build/index.js",
+        "start:dev": "cp -r constants ts-build/; tsc --watch & nodemon ts-build/src/index.js",
         "start": "yarn compile; node index.js",
         "compile": "tsc",
         "compile:watch": "tsc --watch",

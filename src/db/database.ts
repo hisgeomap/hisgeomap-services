@@ -1,11 +1,10 @@
 import { createConnection, createQueryBuilder, getManager } from "typeorm";
-import config from "../env.config";
+import config from "../config";
 import { countypts } from "../models/entities/countypts";
 import { Place } from "../models/place";
 import { prefecturepgn } from "../models/entities/prefecturepgn";
 import { prefecturepts } from "../models/entities/prefecturepts";
 // import { County, Prefecture, PrefecturePTS } from "../models/place";
-
 export default class GeoInfoCollector {
     conn;
     repo;
@@ -13,6 +12,7 @@ export default class GeoInfoCollector {
     constructor() {
         GeoInfoCollector.connectToDatabase(conn => {
             this.conn = conn;
+
             this.repo = {
                 countypts: conn.getRepository(countypts),
                 prefecturepgn: conn.getRepository(prefecturepgn),

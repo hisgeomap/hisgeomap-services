@@ -1,16 +1,17 @@
 export default {
     database: {
-        host: "db",
+        host: "localhost",
         port: 5432,
-        username: "aaaaaa",
-        password: "bbbbbb",
+        username: "1234",
+        password: "1234",
         database: "geo-info-collector"
     },
     search: {
-        host: "http://search:9200"
+        host: "http://localhost:9200"
     },
     server: {
-        port: 8082,
+        SSLport: 8082,
+        port: 8083,
         root: "/api"
     }
 };

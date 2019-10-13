@@ -1,10 +1,17 @@
 import { Client } from "@elastic/elasticsearch";
-import config from "../env.config";
+import config from "../config";
 import { TimeTranslator } from "../util/Time";
-import assert = require("assert");
-import { resolve } from "url";
 import { sortSortedArrays, SortedHashMap } from "../util/Sort";
+import ConditionFormulaService from "../util/ConditionFormulaService";
 
+interface SearchConfig {
+    index: any;
+    filter: any;
+    sort: any;
+    fields: any;
+    aggregation: any;
+    size: number;
+}
 export default class Search {
     client;
 
@@ -25,9 +32,7 @@ export default class Search {
                         filter: {
                             script: {
                                 script: {
-                                    source: `doc['endYear'].value - doc['startYear'].value + doc['from'].value >= ${
-                                        timeTranslator.year
-                                    }`,
+                                    source: `doc['endYear'].value - doc['startYear'].value + doc['from'].value >= ${timeTranslator.year}`,
                                     lang: "painless"
                                 }
                             }
@@ -91,6 +96,43 @@ export default class Search {
         };
     }
 
+    async searchPlaces(config: SearchConfig) {
+        const { index, filter, fields, sort, aggregation, size } = config;
+        const filterObj = new ConditionFormulaService().translate(filter);
+        const query = {
+            index: index.index,
+            type: index.type,
+            body: {
+                size,
+                query: {
+                    bool: {
+                        filter: filterObj
+                    }
+                }
+            }
+        };
+
+        const data = (await this.client.search(query)).body.hits.hits;
+        const result = data.map(e => {
+            const preset = {
+                _score: e._score,
+                _index: e._index,
+                _type: e._type,
+                _id: e._id
+            };
+            if (fields) {
+                return fields.reduce((prev, cur) => {
+                    prev[cur] = e._source[cur];
+                    return prev;
+                }, {});
+            } else {
+                return { ...e._source, ...preset };
+            }
+        });
+
+        return result;
+    }
+
     async getPlaces(place, year) {
         const client = this.client;
         return await Promise.all([
@@ -110,29 +152,23 @@ export default class Search {
                         size: 25,
                         query: {
                             bool: {
-                                must: year
-                                    ? [
-                                          {
-                                              match_phrase: {
-                                                  NAME_CH: place
-                                              }
-                                          },
-                                          {
-                                              range: {
-                                                  BEG_YR: { lte: year }
-                                              }
-                                          },
-                                          {
-                                              range: {
-                                                  END_YR: { gte: year }
-                                              }
-                                          }
-                                      ]
-                                    : {
-                                          match_phrase: {
-                                              NAME_CH: place
-                                          }
-                                      }
+                                must: [
+                                    {
+                                        match_phrase: {
+                                            NAME_CH: place
+                                        }
+                                    },
+                                    {
+                                        range: {
+                                            BEG_YR: { lte: year }
+                                        }
+                                    },
+                                    {
+                                        range: {
+                                            END_YR: { gte: year }
+                                        }
+                                    }
+                                ]
                             }
                         },
                         sort: [
@@ -148,6 +184,59 @@ export default class Search {
                 resolve(results.body.hits.hits);
             });
         }
+    }
+
+    async getPlacesByYear(year: number, zoom: number, bound) {
+        const client = this.client;
+
+        const toGeoJSON = (places: any[]) => {
+            const map = {
+                POINT: "Point",
+                multipolygon: "MultiPolygon",
+                polygon: "Polygon"
+            };
+            return {
+                type: "FeatureCollection",
+                features: places.map(place => {
+                    const geom = place._source.geometry;
+                    geom.type = map[geom.type] ? map[geom.type] : geom.type;
+                    return {
+                        type: "Feature",
+                        properties: {
+                            name_ch: place._source.NAME_CH,
+                            x_coor: place._source.X_COOR,
+                            y_coor: place._source.Y_COOR
+                        },
+                        geometry: geom
+                    };
+                })
+            };
+        };
+
+        const results = await client.search({
+            index: "prefecturepts,countypts,prefecturepgn",
+            body: {
+                size: 10000,
+                query: {
+                    bool: {
+                        must: [
+                            {
+                                range: {
+                                    BEG_YR: { lte: year }
+                                }
+                            },
+                            {
+                                range: {
+                                    END_YR: { gte: year }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        });
+
+        return toGeoJSON(results.body.hits.hits);
     }
 
     async getPlacesAutoComplete(place, year) {

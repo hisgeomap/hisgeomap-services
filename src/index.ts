@@ -1,13 +1,11 @@
 import * as Koa from "koa";
 import * as Router from "koa-router";
 import * as bodyParser from "koa-bodyparser";
-import * as compress from "koa-compress";
 import * as cors from "@koa/cors";
 import * as http2 from "http2";
 import * as http from "http";
 import * as fs from "fs";
 import config from "./config";
-import Database from "./db/database";
 import GeoJSONService from "./util/GeoJSONService";
 import Search from "./db/search";
 
@@ -18,7 +16,6 @@ const options = {
     passphrase: "hisgeomap776"
 };
 
-// const db = new Database();
 const search = new Search();
 
 const createRouter = () => {
@@ -93,15 +90,6 @@ const createRouter = () => {
 
     app.use(cors());
     app.use(bodyParser());
-    app.use(
-        compress({
-            filter: function(content_type) {
-                return /text/i.test(content_type);
-            },
-            threshold: 2048,
-            flush: require("zlib").Z_SYNC_FLUSH
-        })
-    );
     app.use(router.routes());
 
     return app;

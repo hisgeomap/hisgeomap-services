@@ -122,14 +122,18 @@ export default class Search {
             };
             if (fields) {
                 return fields.reduce((prev, cur) => {
-                    prev[cur] = e._source[cur];
+                    if (preset[cur] !== undefined) {
+                        prev[cur] = preset[cur];
+                    } else {
+                        prev[cur] = e._source[cur];
+                    }
+
                     return prev;
                 }, {});
             } else {
                 return { ...e._source, ...preset };
             }
         });
-
         return result;
     }
 

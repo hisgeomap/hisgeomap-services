@@ -1,0 +1,3 @@
+# Command
+
+wrk -d 30s -t 40 -c 200 --timeout 10s "http://localhost/api/geojson?filter=[%22BEG_YR%3C=1911%22,%22END_YR%3E=1911%22]&fields=[%22NAME_CH%22,%22geometry%22]&size=100&index=countypts"
